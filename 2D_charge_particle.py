@@ -1,8 +1,6 @@
 import numpy as np
 
 
-
-
 def r(x):
     return np.sqrt(x[0]**2+ x[1]**2)
 
