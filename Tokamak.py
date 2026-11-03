@@ -13,10 +13,10 @@ def B(x):
                                     (r(x) -1) / (2* r(x))])
 
 
- def A(x):
-    return np.array([                                         0,
-                           1/2  * ( x[0]- np.log(r(x) + x[0]) ),
-           -1/2 * (x[2] * np.arctan(x[1]/x[0]) + np.log(r2(x))) ])
+def A(x):
+    return np.array([0, 
+                     1/2  * ( x[0]- np.log(r(x) + x[0]) ), 
+                     -1/2 * (x[2] * np.arctan(x[1]/x[0]) + np.log(r2(x))) ])
 
 def U(x):
     return 0
