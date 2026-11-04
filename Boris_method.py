@@ -14,11 +14,11 @@ def A(x):
 
 
 def U(x):
-    rr = max(r(x), 1e-40)
+    rr = max(r(x), 1e-40) # TO make sure the I dont get divide by zero errors
     return 1 / (100 * rr)
 
 def gradU(x):
-    rr= max(r(x), 1e-40)
+    rr= max(r(x), 1e-40) # TO make sure the I dont get divide by zero errors
     return -1/ 100 *np.array([x[0]/r(x)**3, x[1]/r(x)**3, 0])
 
 
@@ -45,15 +45,13 @@ def initial_velocity(x0, v0):
 
     # solve_ivp( f(tn, yn) = y', t_span, intitial value y0)
     sol = solve_ivp(system, (0, -0.1), Y0)
-
     v_m1 = sol.y[3:, -1]
-
     v_initial = (v0 + v_m1)/2
 
-    # Another way of finding the intitial value, without averaging,
+    # # Another way of finding the intitial value, without averaging,
     # sol = solve_ivp(system, (0, -0.05), Y0)
-    # v_m1 = sol.y[3:, -1]
-    # print(v_m1)
+    # v_initial = sol.y[3:, -1]
+
     return v_initial
 
 
