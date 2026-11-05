@@ -1,9 +1,10 @@
-from  fourth_order_multistep import fourth_order_sym_multistep, fourth_order_sym_multistep_step, charged_particle_eq
+from  fourth_order_multistep import fourth_order_sym_multistep, fourth_order_sym_multistep_step, charged_particle_eq, fourth_order_sym_multistep_jax
 import matplotlib.pyplot as plt
 import numpy as np
 from Tokamak import B, r, gradU, A, r2, U
 import scipy
-
+import jax
+import jax.numpy as jnp
 T = 10**2
 t_0 = 0
 h = 0.1 
@@ -28,16 +29,35 @@ alpha_list = np.array([
     1            # α₄
 ])
 
+alpha_list = jnp.array([
+    1,           # α₋₄
+    -7/5,        # α₋₃
+    9/25,        # α₋₂
+    22/125,      # α₋₁
+    -34/125,     # α₀
+    22/125,      # α₁
+    9/25,        # α₂
+    -7/5,        # α₃
+    1            # α₄
+])
+
 def A(x):
     return np.array([0 * r(x), 
                      1/2  * ( x[0]- np.log(r(x) + x[0]) ), 
                      -1/2 * (x[2] * np.arctan(x[1]/x[0]) + np.log(r2(x))) ])
+def A_jax(x):
+    return jnp.array([0 * r_jax(x), 
+                     1/2  * ( x[0]- jnp.log(r_jax(x) + x[0]) ), 
+                     -1/2 * (x[2] * jnp.arctan(x[1]/x[0]) + jnp.log(r2(x))) ])
+
+def r_jax(x): 
+    return jnp.sqrt(x[0]**2+ x[1]**2)
 
 # Initial conditions
 x0 = np.array([1.2, 0, 0])
 v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
 
-results = fourth_order_sym_multistep(x0, v0, alpha_list, h, beta0, beta1, t_0, T, B, gradU, A)
+results = fourth_order_sym_multistep_jax(x0, v0, alpha_list, h, beta0, beta1, t_0, T, B, gradU, A_jax)
 
 # Plotting x2 as function of x1
 plt.plot(results["x"][0], results["x"][1])

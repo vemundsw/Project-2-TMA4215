@@ -181,17 +181,6 @@ def fourth_order_sym_multistep(x_0: np.array, v_0: np.array, alpha: np.array, h:
 
     for i in range(8, t.size ):
 
-        if np.any(np.isnan(x[:, :i])):
-            print(f"NaN already in x at i={i}")
-            print("First NaN at column:", np.where(np.any(np.isnan(x), axis=0))[0][0])
-            break
-    
-        # Check the 5-point window before computing F
-        window_check = x[:, (i-7):(i-2)]
-        if np.any(np.isnan(window_check)):
-            print(f"NaN in window at i={i}")
-            break
-
 
         # Compute F_n-1, F_n, F_n+1
         if i == 8:
@@ -210,10 +199,10 @@ def fourth_order_sym_multistep(x_0: np.array, v_0: np.array, alpha: np.array, h:
         # Take a step
         x[:, i ] = fourth_order_sym_multistep_step(x[:, (i-8) : (i + 1)], alpha, h, beta0, beta1, F)
 
+        print(x[:, i])
         # v is computed by a five point difference. Needs to be centered in i-2
         v[:, i - 2] = delta_yj(x[:, (i-4):(i+1)]) / h       
        
 
     return {"x": x, "v": v, "t": t}
-
 

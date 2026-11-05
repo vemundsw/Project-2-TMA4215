@@ -127,7 +127,7 @@ closure_A = jax.tree_util.Partial(A_charged_particle)
 closure_jacobian = jax.tree_util.Partial(A_charged_jacobian)
 
 start = time.time()
-results = fourth_order_sym_multistep_lax(x, v, int(t.size), alpha_list, h, beta0, beta1, t_0, T, U_grad_charged_particle, A_charged_particle, A_charged_jacobian)
+results = fourth_order_sym_multistep_lax(x, v, int(t.size), alpha_list, h, beta0, beta1, U_grad_charged_particle, A_charged_particle, A_charged_jacobian)
 stop = time.time()
 print(f"With T = {T} the jitted multistep takes {round(stop - start, 4)}s")
 
