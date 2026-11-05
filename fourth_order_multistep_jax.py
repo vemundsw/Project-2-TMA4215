@@ -164,7 +164,7 @@ def fourth_order_sym_multistep_step_fast(x: jnp.array, alpha: jnp.array, h: floa
 
 
 
-def fourth_order_sym_multistep_lax(x: jnp.array, v: jnp.array, t_size: int, alpha: jnp.array, h: float, beta0: float, beta1: float, t_0: float, t_f: float, U_grad: callable, A: callable, jacobian: callable) -> jnp.array:
+def fourth_order_sym_multistep_lax(x: jnp.array, v: jnp.array, t_size: int, alpha: jnp.array, h: float, beta0: float, beta1: float, U_grad: callable, A: callable, jacobian: callable) -> jnp.array:
 
     """
     Fourth order symmetrical multistep method
