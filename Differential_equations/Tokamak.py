@@ -1,28 +1,34 @@
 import numpy as np
 
 
-def r2(x):
+def r2(x: np.array) -> float:
     return x[0]**2+ x[1]**2
 
-def r(x):
+def r(x: np.array) -> float:
     return np.sqrt(x[0]**2+ x[1]**2)
 
-def B(x):
+def B(x: np.array) -> np.array:
+    """
+    Returns the forces of the magnetic Field
+    """
+
     return np.array([-(2 * x[1] + x[0]*x[2]) / (2 *r2(x)),
                           (2*x[0] - x[1]*x[2]) / 2* r2(x),
                                     (r(x) -1) / (2* r(x))])
 
 
-def A(x):
+def A(x: np.array) -> np.array:
     return np.array([0, 
                      1/2  * ( x[0]- np.log(r(x) + x[0]) ), 
                      -1/2 * (x[2] * np.arctan(x[1]/x[0]) + np.log(r2(x))) ])
 
-def U(x):
+def U(x: np.array) -> float:
     return 0
 
-def gradU(x):
+def gradU(x: np.array) -> float:
     return 0
+
+
 
 # Initial conditions
 x0 = np.array([1.2, 0, 0])

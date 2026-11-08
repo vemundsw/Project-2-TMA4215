@@ -3,22 +3,22 @@ from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 # import jax as jnp
 
-def r(x):
+def r(x: np.array) -> float:
     return np.sqrt(x[0]**2+ x[1]**2)
 
-def B(x):
+def B(x: np.array) -> np.array:
     return np.array([0, 0, r(x)])
 
 
-def A(x):
+def A(x: np.array) -> np.array:
     return 1/3 * np.array([-x[1]*r(x), x[0]*r(x), 0])
 
 
-def U(x):
+def U(x: np.array) -> float:
     rr = max(r(x), 1e-20) # TO make sure the I dont get divide by zero errors
     return 1 / (100 * rr)
 
-def gradU(x):
+def gradU(x: np.array) -> np.array:
     rr= max(r(x), 1e-20) # TO make sure the I dont get divide by zero errors
     return -1/ 100 *np.array([x[0]/rr**3, x[1]/rr**3, 0])
 
@@ -32,10 +32,19 @@ T = 10**5  # Total time
 # Time array becomes (0, 0.1, 0.2, 0.3, ... , 99 999.8, 99 999.9, 100 000)
 
 
-def initial_velocity(x0, v0):
+def initial_velocity(x0: np.array, v0: np.array) -> np.array:
+    """
+    Calculates the initial velocity v(t_0 - h/2).
+    The Boris method uses positions and velocity at timeintervals h/2  apart.
+
+    x0: x(t_0) array with shape 3.
+    v0: v(t_0) arrau of shape 3.
+    
+    Returns v(t_0 -h/2)
+    """
 
     # Using solve_ivp to calculate the v(-0.05)
-    def system(t, Y):
+    def system(t: np.array, Y: np.array):
         x = Y[:3]
         v = Y[3:]
         dxdt = v
@@ -44,12 +53,6 @@ def initial_velocity(x0, v0):
 
     Y0 = np.concatenate((x0, v0))    # Everything in solvebvp must be one in one vector.
 
-    # # solve_ivp( f(tn, yn) = y', t_span, intitial value y0)
-    # sol = solve_ivp(system, (0, -0.1), Y0)
-    # v_m1 = sol.y[3:, -1]
-    # v_initial = (v0 + v_m1)/2
-
-    # Another way of finding the intitial value, without averaging.
     sol = solve_ivp(system, (0, -0.05), Y0)
     v_initial = sol.y[3:, -1]
 
@@ -59,7 +62,7 @@ def initial_velocity(x0, v0):
 
 
 # Staggered grid. the velocities are half a grid point behind the position values
-def Boris_step(x, v, h):
+def Boris_step(x: np.array, v: np.array, h: np.array):
     v_minus = v -  h/2 * gradU(x)    #v_minus
 
     t = h/2 * B(x)
@@ -74,6 +77,7 @@ def Boris_step(x, v, h):
 
 
 def Boris_method():
+
     x0 = np.array([0, 1, 0.1])
     v0 = np.array([0.09, 0.05, 0.20])
 
@@ -117,21 +121,6 @@ ax.legend()
 # plt.savefig("boris.pdf", bbox_inches="tight")
 plt.show()
 
-
-
-# def energy(x, v):
-#     return 1/2 * np.linalg.norm(v, 2)**2 + U(x)
-
-
-# fig, ax = plt.subplots(figsize=(10, 6))
-# ax.plot(np.linspace(0, 10**4, 10**5), energy(positions, velocities), label = "energy")
-# ax.set_ylabel("Energy over time")
-# ax.set_xlabel("Time")
-# ax.grid(True)
-
-# ax.legend()
-# # plt.savefig("boris.pdf", bbox_inches="tight")
-# plt.show()
 
 energy = (
     0.5*np.sum(velocities**2, axis=1)
