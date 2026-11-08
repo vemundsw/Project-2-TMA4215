@@ -1,38 +1,28 @@
+# Herman: La til disse 4 linjene for å hente kode fra en annen mappe.
+# Ser om det blir mer oversiktlig.
+from pathlib import Path
+import sys
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from Differential_equations.Tokamak import r, r2, B, A, U, gradU
 import numpy as np
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 # import jax as jnp
 
-def r(x: np.array) -> float:
-    return np.sqrt(x[0]**2+ x[1]**2)
-
-def B(x: np.array) -> np.array:
-    return np.array([0, 0, r(x)])
-
-
-def A(x: np.array) -> np.array:
-    return 1/3 * np.array([-x[1]*r(x), x[0]*r(x), 0])
-
-
-def U(x: np.array) -> float:
-    rr = max(r(x), 1e-20) # TO make sure the I dont get divide by zero errors
-    return 1 / (100 * rr)
-
-def gradU(x: np.array) -> np.array:
-    rr= max(r(x), 1e-20) # TO make sure the I dont get divide by zero errors
-    return -1/ 100 *np.array([x[0]/rr**3, x[1]/rr**3, 0])
 
 
 # Initial conditions
-x0 = np.array([0, 1, 0.1])
-v0 = np.array([0.09, 0.05, 0.20])
+x0 = np.array([1.2, 0, 0])
+v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
 
-h = 0.1    # Steplength in time
-T = 10**5  # Total time 
-# Time array becomes (0, 0.1, 0.2, 0.3, ... , 99 999.8, 99 999.9, 100 000)
+h = 0.1    # Steplength
+T = 10**4  # Total time 
 
 
-def initial_velocity(x0: np.array, v0: np.array) -> np.array:
+def initial_velocity(x0: np.array, v0: np.array, h: float = 0.1) -> np.array:
     """
     Calculates the initial velocity v(t_0 - h/2).
     The Boris method uses positions and velocity at timeintervals h/2  apart.
@@ -44,7 +34,7 @@ def initial_velocity(x0: np.array, v0: np.array) -> np.array:
     """
 
     # Using solve_ivp to calculate the v(-0.05)
-    def system(t: np.array, Y: np.array):
+    def system(t: np.array, Y: np.array, h: float = 0.1):
         x = Y[:3]
         v = Y[3:]
         dxdt = v
@@ -53,7 +43,7 @@ def initial_velocity(x0: np.array, v0: np.array) -> np.array:
 
     Y0 = np.concatenate((x0, v0))    # Everything in solvebvp must be one in one vector.
 
-    sol = solve_ivp(system, (0, -0.05), Y0)
+    sol = solve_ivp(system, (0, -h/2), Y0)
     v_initial = sol.y[3:, -1]
 
     return v_initial
@@ -62,7 +52,19 @@ def initial_velocity(x0: np.array, v0: np.array) -> np.array:
 
 
 # Staggered grid. the velocities are half a grid point behind the position values
-def Boris_step(x: np.array, v: np.array, h: np.array):
+def Boris_step(x: np.array, v: np.array, h: np.array = 0.1) -> tuple[np.array, np.array]:
+    """
+    Calculates one step of the Boris method
+
+
+    x: Current position, array of size 3.
+    v: Current velocity, array of size 3.
+    h:  Steplength in time.
+    
+    return: x_next, v_nect
+    """
+
+
     v_minus = v -  h/2 * gradU(x)    #v_minus
 
     t = h/2 * B(x)
@@ -76,13 +78,18 @@ def Boris_step(x: np.array, v: np.array, h: np.array):
     return x_next, v_next
 
 
-def Boris_method():
+def Boris_method(x0: np.array, v0: np.array, T: int = 10**5, h: float = 0.1,) -> tuple[np.array, np.array]:
+    """
+    Boris_method, calculates the position and velocity of the particle at time t.
 
-    x0 = np.array([0, 1, 0.1])
-    v0 = np.array([0.09, 0.05, 0.20])
+    x0: Iinitial position, array of size 3.
+    v0: Iinitial velocity, array of size 3.
+    T:  Total time.
+    h:  Steplength in time.
 
-    T = 10**4
-    h= 0.1
+    return: arrays of positions and velocities.
+    """
+
     N = int(T/h)
 
     v_init = initial_velocity(x0, v0)
@@ -90,10 +97,7 @@ def Boris_method():
     x_values = np.zeros(shape=(N,3))
     x_values[0] = x0
     v_values = np.zeros(shape=(N,3))
-    v_values[0] = v0
-
-
-    ###########Fix listene her!
+    v_values[0] = v_init
 
     x = x0
     v = v_init
@@ -104,11 +108,12 @@ def Boris_method():
 
     return np.array(x_values), np.array(v_values)
 
-positions, velocities = Boris_method()
 
-radius = np.linalg.norm(positions[:, :2], axis=1)
-plt.plot(radius)
-print(h*np.max(radius))
+
+
+positions, velocities = Boris_method(x0, v0, 10**5)
+
+
 
 
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -116,10 +121,17 @@ ax.plot(positions[:,0], positions[:, 1], label = "Position")
 ax.set_ylabel("Position y")
 ax.set_xlabel("Position x")
 ax.grid(True)
-
 ax.legend()
-# plt.savefig("boris.pdf", bbox_inches="tight")
+ax.set_title("Position of a electrically charged particle in the Tokamak system")
 plt.show()
+
+
+plt.figure()
+radius = np.sqrt(positions[:,0]**2 + positions[:,1]**2)
+plt.plot(radius, positions[:,2])
+plt.title("Radius of the particle curve")
+plt.show()
+print(h*np.max(radius))
 
 
 energy = (
@@ -129,7 +141,18 @@ energy = (
 
 plt.figure()
 plt.plot([n for n in range(len(energy))], energy)
+plt.title("Energy of the particle")
 plt.show()
+
+
+speed2 = np.sum(velocities**2, axis=1)
+plt.plot(speed2)
+plt.title(r"$|v|^2$")
+plt.show()
+
+print(
+    (speed2.max()-speed2.min())/speed2.mean()
+)
 
 
 #Next step:
