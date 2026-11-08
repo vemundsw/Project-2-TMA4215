@@ -1,25 +1,24 @@
-# Herman: La til disse 4 linjene for å hente kode fra en annen mappe.
-# Ser om det blir mer oversiktlig.
-from pathlib import Path
 import sys
+import numpy as np
+import matplotlib.pyplot as plt
+
+from scipy.integrate import solve_ivp
+from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from Differential_equations.Tokamak import r, r2, B, A, U, gradU
-import numpy as np
-from scipy.integrate import solve_ivp
-import matplotlib.pyplot as plt
-# import jax as jnp
 
 
 
-# Initial conditions
-x0 = np.array([1.2, 0, 0])
-v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
 
-h = 0.1    # Steplength
-T = 10**4  # Total time 
+# # Initial conditions
+# x0 = np.array([1.2, 0, 0])
+# v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
+
+# h = 0.1    # Steplength
+# T = 10**4  # Total time 
 
 
 def initial_velocity(x0: np.array, v0: np.array, h: float = 0.1) -> np.array:
@@ -111,50 +110,26 @@ def Boris_method(x0: np.array, v0: np.array, T: int = 10**5, h: float = 0.1,) ->
 
 
 
-positions, velocities = Boris_method(x0, v0, 10**5)
+# positions, velocities = Boris_method(x0, v0, 10**5)
 
 
 
 
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(positions[:,0], positions[:, 1], label = "Position")
-ax.set_ylabel("Position y")
-ax.set_xlabel("Position x")
-ax.grid(True)
-ax.legend()
-ax.set_title("Position of a electrically charged particle in the Tokamak system")
-plt.show()
+# fig, ax = plt.subplots(figsize=(10, 6))
+# ax.plot(positions[:,0], positions[:, 1], label = "Position")
+# ax.set_ylabel("Position y")
+# ax.set_xlabel("Position x")
+# ax.grid(True)
+# ax.legend()
+# ax.set_title("Position of a electrically charged particle in the Tokamak system")
+# plt.show()
 
 
-plt.figure()
-radius = np.sqrt(positions[:,0]**2 + positions[:,1]**2)
-plt.plot(radius, positions[:,2])
-plt.title("Radius of the particle curve")
-plt.show()
-print(h*np.max(radius))
+# plt.figure()
+# radius = np.sqrt(positions[:,0]**2 + positions[:,1]**2)
+# plt.plot(radius, positions[:,2])
+# plt.title("Radius of the particle curve")
+# plt.show()
+# print(h*np.max(radius))
 
 
-energy = (
-    0.5*np.sum(velocities**2, axis=1)
-    + np.array([U(x) for x in positions])
-)
-
-plt.figure()
-plt.plot([n for n in range(len(energy))], energy)
-plt.title("Energy of the particle")
-plt.show()
-
-
-speed2 = np.sum(velocities**2, axis=1)
-plt.plot(speed2)
-plt.title(r"$|v|^2$")
-plt.show()
-
-print(
-    (speed2.max()-speed2.min())/speed2.mean()
-)
-
-
-#Next step:
-# Check why the trajectory is not stable.
-# Implement Jax JIT.
