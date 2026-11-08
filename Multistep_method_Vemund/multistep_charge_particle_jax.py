@@ -1,4 +1,4 @@
-from  fourth_order_multistep_jax import  fourth_order_sym_multistep_step_fast, create_grids, fourth_order_sym_multistep_lax
+from fourth_order_multistep_jax import  fourth_order_sym_multistep_step_fast, create_grids, fourth_order_sym_multistep_lax
 import matplotlib.pyplot as plt
 import numpy as np
 import jax

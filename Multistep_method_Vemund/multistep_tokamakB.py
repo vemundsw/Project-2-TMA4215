@@ -1,6 +1,15 @@
-from  fourth_order_multistep_jax import fourth_order_sym_multistep_lax,  charged_particle_eq, create_grids
+# Herman: La til disse 4 linjene for å hente kode fra en annen mappe.
+# Ser om det blir mer oversiktlig.
+from pathlib import Path
+import sys
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+
+from fourth_order_multistep_jax import fourth_order_sym_multistep_lax,  charged_particle_eq, create_grids
 import matplotlib.pyplot as plt
-from Tokamak import B, r, gradU, A, r2, U
+from Differential_equations.Tokamak import B, r, gradU, A, r2, U
 import scipy
 import jax
 import jax.numpy as jnp
