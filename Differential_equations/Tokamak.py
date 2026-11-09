@@ -36,14 +36,6 @@ def gradU(x: np.array) -> float:
     return 0
 
 
-
-# # Initial conditions
-# x0 = np.array([1.2, 0, 0])
-# v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
-
-# h = 0.1    # Steplength
-# T = 10**5  # Total time 
-
 # # System of differential equations
 def system(t: np.array, Y: np.array) -> np.array:
     x = Y[:3]

@@ -9,7 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from Differential_equations.Tokamak import r, r2, B, A, U, gradU, system
-from Boris_method_Herman.Tokamak_Boris_method import Boris_method, plot_Boris
+from Boris_method_Herman.Tokamak_Boris_method import Boris_method, plot_Boris, Energy
 
 
 
@@ -29,9 +29,6 @@ plot_Boris(positions)
 
 
 
-
-
-
 # Creating a reference solution to estimate error
 y_0 = np.concatenate((x0, v0), axis = None)
 
@@ -44,13 +41,26 @@ v_ref = ref_sol.y[3:]
 
 x_ref = ref_sol.y[:3].T
 
-multistep_error = np.linalg.norm(positions - x_ref, ord = 2, axis = 1)
+Boris_error = np.linalg.norm(positions - x_ref, ord = 2, axis = 1)
 
 
-plt.plot(t, multistep_error)
+plt.plot(t, Boris_error)
 plt.semilogy()
 plt.xscale("log")
 plt.xlabel("t")
 plt.ylabel(r"2-norm error")
 plt.title("Error of Boris method for the Tokamak system")
 plt.show()
+
+
+
+energy_diff_Boris = abs(Energy(positions, velocities) - Energy(x0, v0))
+plt.plot(t, Boris_error)
+plt.semilogy()
+plt.xscale("log")
+plt.xlabel("t")
+plt.ylabel(r"2-norm error")
+plt.title("Energy difference of Boris method for the Tokamak system")
+plt.show()
+
+# Feilen og energien er nesten helt lik.

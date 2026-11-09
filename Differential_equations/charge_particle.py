@@ -13,11 +13,11 @@ def A(x: np.array) -> np.array:
 
 
 def U(x: np.array) -> float:
-    rr = max(r(x), 1e-20) # TO make sure the I dont get divide by zero errors
+    rr = np.clip(r(x), 1e-20, None) # To make sure the I dont get divide by zero errors
     return 1 / (100 * rr)
 
 def gradU(x: np.array) -> np.array:
-    rr= max(r(x), 1e-20) # TO make sure the I dont get divide by zero errors
+    rr= np.clip(r(x), 1e-20, None) # TO make sure the I dont get divide by zero errors
     return -1/ 100 *np.array([x[0]/rr**3, x[1]/rr**3, 0])
 
 

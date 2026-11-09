@@ -126,6 +126,23 @@ def plot_Boris(positions):
     return
 
 
+def Energy(x: np.array, v: np.array) -> float:
+
+    """
+    Energy as sum of kinetic energy and potential energy
+
+    x: position on form (x1, x2, x3)
+    v: velocity on form (v1, v2, v3)
+
+    Returns energy as scalar
+    """
+
+    return 1/2 * np.linalg.norm(v, ord = 2, axis = 0) ** 2 + U(x)
+
+
+
+
+
 
 # plt.figure()
 # radius = np.sqrt(positions[:,0]**2 + positions[:,1]**2)

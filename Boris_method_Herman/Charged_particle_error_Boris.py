@@ -9,7 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from Differential_equations.charge_particle import r, B, A, U, gradU, system
-from Boris_method_Herman.Charged_particle_Boris_method import Boris_method, plot_Boris
+from Boris_method_Herman.Charged_particle_Boris_method import Boris_method, plot_Boris, Energy
 
 
 
@@ -28,11 +28,7 @@ plot_Boris(positions)
     
 
 
-
-
-
-
-
+print("Solving initial value problem to estimate an error.")
 # Creating a reference solution to estimate error
 y_0 = np.concatenate((x0, v0), axis = None)
 
@@ -45,13 +41,22 @@ v_ref = ref_sol.y[3:]
 
 x_ref = ref_sol.y[:3].T
 
-multistep_error = np.linalg.norm(positions - x_ref, ord = 2, axis = 1)
+Boris_error = np.linalg.norm(positions - x_ref, ord = 2, axis = 1)
 
 
-plt.plot(t, multistep_error)
+plt.plot(t, Boris_error)
 plt.semilogy()
 plt.xscale("log")
 plt.xlabel("t")
 plt.ylabel(r"2-norm error")
 plt.title("Error of Boris method for 2D charged particle")
+plt.show()
+
+energy_diff_Boris = abs(Energy(positions, velocities) - Energy(x0, v0))
+plt.plot(t, Boris_error)
+plt.semilogy()
+plt.xscale("log")
+plt.xlabel("t")
+plt.ylabel(r"2-norm error")
+plt.title("Energy difference of Boris method for the 2d_charged particle system")
 plt.show()

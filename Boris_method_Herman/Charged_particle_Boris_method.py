@@ -11,11 +11,6 @@ if str(ROOT) not in sys.path:
 from Differential_equations.charge_particle import r, B, A, U, gradU
 
 
-
-
-
-
-
 # # Initial conditions
 # x0 = np.array([0, 1, 0.1])
 # v0 = np.array([0.09, 0.05, 0.20])
@@ -99,25 +94,25 @@ def Boris_method(x0: np.array, v0: np.array, T: int = 10**5, h: float = 0.1,) ->
 
     v_init = initial_velocity(x0, v0)
 
-    x_values = np.zeros(shape=(N,3))
+
+    # Calculate one extra step, so I can use averaging to find v_n from v_(n-(h/2)) and v_(n+(h/2)). 
+    x_values = np.zeros(shape=(N+1,3))
     x_values[0] = x0
-    v_values = np.zeros(shape=(N,3))
-    v_values[0] = v_init
+    v_half_step = np.zeros(shape=(N+1,3))
+    v_half_step[0] = v_init
 
     x = x0
     v = v_init
-    for i in range(N-1):
+    for i in range(N):
         x, v = Boris_step(x, v, h)
         x_values[i+1] = x
-        v_values[i+1] = v
+        v_half_step[i+1] = v
 
-    return np.array(x_values), np.array(v_values)
+    v_averages = 1/2 * (v_half_step[:-1] + v_half_step[1:])
+    
+    # print(f' Shape of x: {x_values[:-1].shape}, shape of v: {v_averages.shape}')
 
-
-
-
-# positions, velocities = Boris_method(x0, v0, 10**5)
-
+    return np.array(x_values[:-1]), np.array(v_averages)
 
 
 def plot_Boris(positions):
@@ -133,18 +128,19 @@ def plot_Boris(positions):
     return
 
 
+def Energy(x: np.array, v: np.array) -> float:
+
+    """
+    Energy as sum of kinetic energy and potential energy
+
+    x: position on form (x1, x2, x3)
+    v: velocity on form (v1, v2, v3)
+
+    Returns energy as scalar
+    """
+
+    return 1/2 * np.linalg.norm(v, ord = 2, axis = 0) ** 2 + U(x)
 
 
-# energy = (
-#     0.5*np.sum(velocities**2, axis=1)
-#     + np.array([U(x) for x in positions])
-# )
-
-# plt.figure()
-# plt.plot([n for n in range(len(energy))], energy)
-# plt.show()
 
 
-#Next step:
-# Check why the trajectory is not stable.
-# Implement Jax JIT.
