@@ -9,17 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from Differential_equations.charge_particle import r, B, A, U, gradU, system
-from Boris_method_Herman.Boris_method_charged_particle import Boris_method, plot_Boris
-
-
-
-# def charged_particle_eq(t: np.array, Y: np.array, h: float = 0.1):
-#     x = Y[:3]
-#     v = Y[3:]
-#     dxdt = v
-#     dvdt = np.cross(v, B(x)) - gradU(x)
-#     return np.concatenate((dxdt, dvdt))
-
+from Boris_method_Herman.Charged_particle_Boris_method import Boris_method, plot_Boris
 
 
 
