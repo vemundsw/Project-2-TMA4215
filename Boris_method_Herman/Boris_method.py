@@ -9,7 +9,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
+
+
 # To use this as a master_file, I need to take in the system functions as parameters.
+# That does not work yet.
 
 
 def initial_velocity(x0: np.array, v0: np.array, h: float = 0.1) -> np.array:

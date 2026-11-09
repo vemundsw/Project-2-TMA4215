@@ -120,15 +120,17 @@ def Boris_method(x0: np.array, v0: np.array, T: int = 10**5, h: float = 0.1,) ->
 
 
 
+def plot_Boris(positions):
 
-# fig, ax = plt.subplots(figsize=(10, 6))
-# ax.plot(positions[:,0], positions[:, 1], label = "Position")
-# ax.set_ylabel("Position y")
-# ax.set_xlabel("Position x")
-# ax.grid(True)
-# ax.legend()
-# ax.set_title("Position of a electrically charged particle in the Tokamak system")
-# plt.show()
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(positions[:,0], positions[:, 1], label = "Position")
+    ax.set_ylabel("Position y")
+    ax.set_xlabel("Position x")
+    ax.grid(True)
+    ax.legend()
+    ax.set_title("Position of a electrically charged particle")
+    plt.show()
+    return
 
 
 
