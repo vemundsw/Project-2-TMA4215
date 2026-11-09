@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 
 from scipy.integrate import solve_ivp
 from pathlib import Path
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from Differential_equations.charge_particle import r, B, A, U, gradU, system
-from Boris_method_Herman.Charged_particle_Boris_method import Boris_method, plot_Boris, Energy
+from Charged_particle_Boris_method import Boris_method, plot_Boris, Energy
 
 
 
@@ -24,6 +24,9 @@ t = np.arange(t_0, T, h)
 
 
 positions, velocities = Boris_method(x0, v0, T)
+print(f"positions: {positions[0], x0}")
+print(f"velocities: {velocities[0], v0}")
+
 plot_Boris(positions)
     
 

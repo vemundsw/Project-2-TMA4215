@@ -4,21 +4,22 @@ import matplotlib.pyplot as plt
 
 from scipy.integrate import solve_ivp
 from pathlib import Path
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from Differential_equations.Tokamak import r, r2, B, A, U, gradU
-
-
+from Differential_equations.charge_particle import r, B, A, U, gradU
 
 
 # # Initial conditions
-# x0 = np.array([1.2, 0, 0])
-# v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
+# x0 = np.array([0, 1, 0.1])
+# v0 = np.array([0.09, 0.05, 0.20])
 
-# h = 0.1    # Steplength
-# T = 10**4  # Total time 
+# h = 0.1    # Steplength in time
+# T = 10**5  # Total time 
+# # Time array becomes (0, 0.1, 0.2, 0.3, ... , 99 999.8, 99 999.9, 100 000)
+
+
 
 
 def initial_velocity(x0: np.array, v0: np.array, h: float = 0.1) -> np.array:
@@ -93,35 +94,36 @@ def Boris_method(x0: np.array, v0: np.array, T: int = 10**5, h: float = 0.1,) ->
 
     v_init = initial_velocity(x0, v0)
 
-    x_values = np.zeros(shape=(N,3))
+
+    # Calculate one extra step, so I can use averaging to find v_n from v_(n-(h/2)) and v_(n+(h/2)). 
+    x_values = np.zeros(shape=(N+1,3))
     x_values[0] = x0
-    v_values = np.zeros(shape=(N,3))
-    v_values[0] = v_init
+    v_half_step = np.zeros(shape=(N+1,3))
+    v_half_step[0] = v_init
 
     x = x0
     v = v_init
-    for i in range(N-1):
+    for i in range(N):
         x, v = Boris_step(x, v, h)
         x_values[i+1] = x
-        v_values[i+1] = v
+        v_half_step[i+1] = v
 
-    return np.array(x_values), np.array(v_values)
+    v_averages = 1/2 * (v_half_step[:-1] + v_half_step[1:])
+    
+    # print(f' Shape of x: {x_values[:-1].shape}, shape of v: {v_averages.shape}')
 
-
-
-
-# positions, velocities = Boris_method(x0, v0, 10**5)
+    return np.array(x_values[:-1]), np.array(v_averages)
 
 
 def plot_Boris(positions):
-    
+
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(positions[:,0], positions[:, 1], label = "Position")
     ax.set_ylabel("Position y")
     ax.set_xlabel("Position x")
     ax.grid(True)
     ax.legend()
-    ax.set_title("Position of a electrically charged particle in the Tokamak system")
+    ax.set_title("Position of a electrically charged particle")
     plt.show()
     return
 
@@ -140,15 +142,5 @@ def Energy(x: np.array, v: np.array) -> float:
     return 1/2 * np.linalg.norm(v, ord = 2, axis = 0) ** 2 + U(x)
 
 
-
-
-
-
-# plt.figure()
-# radius = np.sqrt(positions[:,0]**2 + positions[:,1]**2)
-# plt.plot(radius, positions[:,2])
-# plt.title("Radius of the particle curve")
-# plt.show()
-# print(h*np.max(radius))
 
 

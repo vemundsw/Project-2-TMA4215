@@ -5,12 +5,12 @@ import time
 
 from scipy.integrate import solve_ivp
 from pathlib import Path
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from Differential_equations.charge_particle import r, B, A, U, gradU, system
-from Boris_method_Herman.Charged_particle_Boris_method import Boris_method, plot_Boris, Energy
+from Charged_particle_Boris_method import Boris_method, plot_Boris, Energy
 
 
 
@@ -21,7 +21,7 @@ v0 = np.array([0.09, 0.05, 0.20])
 T = 1E3
 t_0 = 0
 h = 0.1 
-N = 7       # number of steplengths 
+N = 3       # number of steplengths 
 
 
 global_errors = []

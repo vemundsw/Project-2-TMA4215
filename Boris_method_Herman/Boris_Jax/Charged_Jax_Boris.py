@@ -1,36 +1,14 @@
-
 import scipy
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import jax
 import jax.numpy as jnp
 import jax.lax as lax
+import time
 
 jax.config.update("jax_enable_x64", True)
 
-def charged_particle_eq(t: float, y: jnp.array, B: callable, U_grad: callable) -> jnp.array: 
-
-    """
-    RHS of the governing equation of a particle moving in in a static magnetic field
-
-    y: array on form (x1, x2, x2, v1, v2, v3)
-    t: time 
-    B: function describing magnetic field strength
-    U_grad: function describing gradient of electrostatic potential
-
-    Returns the derivative of y according to the equation
-    """
-    x1_dot = y[3]
-    x2_dot = y[4]
-    x3_dot = y[5]
-    y_dot = jnp.cross(y[3:], B(y[:3])) - U_grad(y[:3])
-
-    return jnp.concatenate((x1_dot, x2_dot, x3_dot, y_dot), axis = None)
-
-# 2D charged particle 
-x_0 = jnp.array([0, 1.0, 0.1])
-v_0 = jnp.array([0.09, 0.05, 0.20])
-
+@jax.jit
 def B(x: jnp.array) -> jnp.array:
 
     """
@@ -56,7 +34,7 @@ def A(x: jnp.array) -> jnp.array:
 
     dist = jnp.sqrt(x[0] ** 2 + x[1] ** 2)
 
-    return (1/3) * jnp.array([-x[1] * dist, x[0] * dist, 0 * dist])
+    return (1/3) * jnp.array([-x[1] * dist, x[0] * dist, 0])
 
 @jax.jit
 def U(x: jnp.array) -> float:
@@ -88,12 +66,6 @@ def gradU(x :jnp.array) -> jnp.array:
 
 
 
-
-
-
-
-
-
 def initial_velocity(x0: jnp.array, v0: jnp.array, h: float = 0.1) -> jnp.array:
     """
     Calculates the initial velocity v(t_0 - h/2).
@@ -121,7 +93,7 @@ def initial_velocity(x0: jnp.array, v0: jnp.array, h: float = 0.1) -> jnp.array:
     return v_initial
 
 
-
+@jax.jit
 def Boris_step(x: jnp.array, v: jnp.array, h: jnp.array = 0.1) -> tuple[jnp.array, jnp.array]:
     """
     Calculates one step of the Boris method
@@ -147,7 +119,6 @@ def Boris_step(x: jnp.array, v: jnp.array, h: jnp.array = 0.1) -> tuple[jnp.arra
     return x_next, v_next
 
 
-
 def Boris_method(x0: jnp.array, v0: jnp.array, T: int = 10**4, h: float = 0.1,) -> tuple[jnp.array, jnp.array]:
     """
     Boris_method, calculates the position and velocity of the particle at time t.
@@ -163,12 +134,6 @@ def Boris_method(x0: jnp.array, v0: jnp.array, T: int = 10**4, h: float = 0.1,) 
     N = int(T/h)
 
     v_init = initial_velocity(x0, v0)
-
-    x_values = jnp.zeros(shape=(N,3))
-    x_values[0] = x0
-    v_values = jnp.zeros(shape=(N,3))
-    v_values[0] = v_init
-
     x = x0
     v = v_init
 
@@ -178,11 +143,51 @@ def Boris_method(x0: jnp.array, v0: jnp.array, T: int = 10**4, h: float = 0.1,) 
 
         return (x, v), (x,v)
 
-    (_, _), trajectory = lax.scan(body, (x0, v0), xs = None, length = N)
+    (_, _), trajectory = lax.scan(body, (x, v), xs = None, length = N+1)
+
+    positions, velocities = trajectory
+    v_averages = 1/2 * (velocities[:-1] + velocities[1:])
+
+    return positions[:-1], v_averages
 
 
-    return trajectory
 
+# Initial conditions
+x0 = jnp.array([0, 1, 0.1])
+v0 = jnp.array([0.09, 0.05, 0.20])
+
+h = 0.1    # Steplength in time
+t_0 = 0
+T = 10**5  # Total time
+t = jnp.arange(t_0, T, h)
+
+
+start = time.perf_counter()
+positions, velocities = Boris_method(x0, v0, T)
+
+stop = time.perf_counter()
+print(f"With h = {h} and T = {T} the Boris method uses {round(stop - start, 4)}s")
+print(positions.shape, velocities.shape)
+
+
+
+
+
+
+
+def plot_Boris(positions):
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(positions[:,0], positions[:, 1], label = "Position")
+    ax.set_ylabel("Position y")
+    ax.set_xlabel("Position x")
+    ax.grid(True)
+    ax.legend()
+    ax.set_title("Position of a electrically charged particle")
+    plt.show()
+    return
+
+plot_Boris(positions)
 
 
 
