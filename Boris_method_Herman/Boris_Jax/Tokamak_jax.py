@@ -151,6 +151,13 @@ def plot_Boris(positions):
     ax.legend()
     ax.set_title("Position of a electrically charged particle")
     plt.show()
+
+
+    plt.figure()
+    radius = jnp.sqrt(positions[:,0]**2 + positions[:,1]**2)
+    plt.plot(radius, positions[:,2])
+    plt.title("Radius of the particle curve")
+    plt.show()
     return
 
 def Boris_method(x0: jnp.array, v0: jnp.array, T: int = 10**4, h: float = 0.1,) -> tuple[jnp.array, jnp.array]:

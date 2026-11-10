@@ -21,20 +21,20 @@ def B(x: jnp.array) -> jnp.array:
 
     return jnp.array([0, 0, jnp.sqrt(x[0] ** 2 + x[1] ** 2)])
 
-@jax.jit
-def A(x: jnp.array) -> jnp.array:
+# @jax.jit
+# def A(x: jnp.array) -> jnp.array:
 
-    """
-    Vector potential for static magnetic field for 2D charged particle
+#     """
+#     Vector potential for static magnetic field for 2D charged particle
 
-    x: position on form (x1, x2, x3)
+#     x: position on form (x1, x2, x3)
     
-    Returns the vector potential
-    """
+#     Returns the vector potential
+#     """
 
-    dist = jnp.sqrt(x[0] ** 2 + x[1] ** 2)
+#     dist = jnp.sqrt(x[0] ** 2 + x[1] ** 2)
 
-    return (1/3) * jnp.array([-x[1] * dist, x[0] * dist, 0])
+#     return (1/3) * jnp.array([-x[1] * dist, x[0] * dist, 0])
 
 @jax.jit
 def U(x: jnp.array) -> float:

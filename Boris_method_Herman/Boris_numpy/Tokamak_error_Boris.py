@@ -19,7 +19,7 @@ v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
 
 h = 0.1    # Steplength
 t_0 = 0
-T = 10**4  # Total time 
+T = 10**5  # Total time 
 t = np.arange(t_0, T, h)
 
 
@@ -64,3 +64,5 @@ plt.title("Energy difference of Boris method for the Tokamak system")
 plt.show()
 
 # Feilen og energien er nesten helt lik.
+
+print("Done")

@@ -123,7 +123,19 @@ def plot_Boris(positions):
     ax.legend()
     ax.set_title("Position of a electrically charged particle in the Tokamak system")
     plt.show()
+
+
+    
+
+    plt.figure()
+    radius = np.sqrt(positions[:,0]**2 + positions[:,1]**2)
+    plt.plot(radius, positions[:,2])
+    plt.title("Radius of the particle curve")
+    plt.show()
+
     return
+
+
 
 
 def Energy(x: np.array, v: np.array) -> float:
@@ -143,12 +155,5 @@ def Energy(x: np.array, v: np.array) -> float:
 
 
 
-
-# plt.figure()
-# radius = np.sqrt(positions[:,0]**2 + positions[:,1]**2)
-# plt.plot(radius, positions[:,2])
-# plt.title("Radius of the particle curve")
-# plt.show()
-# print(h*np.max(radius))
 
 
