@@ -12,58 +12,42 @@ jax.config.update("jax_enable_x64", True)
 def B(x: jnp.array) -> jnp.array:
 
     """
-    Static magnetic field for 2D charged particles
+    Static magnetic field for Tokamak system
 
     x: position on form (x1, x2, x3)
 
     Returns the magnetic field strength
     """
-
-    return jnp.array([0, 0, jnp.sqrt(x[0] ** 2 + x[1] ** 2)])
-
-@jax.jit
-def A(x: jnp.array) -> jnp.array:
-
-    """
-    Vector potential for static magnetic field for 2D charged particle
-
-    x: position on form (x1, x2, x3)
     
-    Returns the vector potential
-    """
+    r = jnp.sqrt(x[0] ** 2 + x[1] ** 2)
 
-    dist = jnp.sqrt(x[0] ** 2 + x[1] ** 2)
+    return jnp.array([-(2 * x[1] + x[0]*x[2]) / (2 * r**2),
+                          (2*x[0] - x[1]*x[2]) / (2* r**2),
+                                    (r - 1) / (2 * r)])
 
-    return (1/3) * jnp.array([-x[1] * dist, x[0] * dist, 0 * dist])
 
 @jax.jit
 def U(x: jnp.array) -> float:
     """
-    Electrostatic potential for 2D charged particle
+    Electrostatic potential for Tokamak system
     
     x: position on form (x1, x2, x3)
         
     Returns the potential
     """
 
-    dist = jnp.sqrt(x[0] ** 2 + x[1] ** 2)
-
-    return 1/ (100 * dist)
+    return 0
 
 @jax.jit
 def gradU(x :jnp.array) -> jnp.array:
     """
-    Gradient of electrostatic potential for 2D charged particle
+    Gradient of electrostatic potential Tokamak system
         
     x: position on form (x1, x2, x3)
             
     Returns the gradient
     """
-
-    dist = jnp.sqrt(x[0] ** 2 + x[1] ** 2) ** 3
-
-    return -1/100 * jnp.array([x[0] / dist, x[1]/ dist, 0])
-
+    return 0
 
 # System of differential equations
 @jax.jit
@@ -203,7 +187,7 @@ v0 = jnp.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
 
 h = 0.1    # Steplength
 t_0 = 0
-T = 10**4  # Total time 
+T = 10**5  # Total time 
 t = jnp.arange(t_0, T, h)
 
 

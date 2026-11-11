@@ -24,6 +24,9 @@ t = np.arange(t_0, T, h)
 
 
 positions, velocities = Boris_method(x0, v0, T)
+
+
+
 plot_Boris(positions)
 
 

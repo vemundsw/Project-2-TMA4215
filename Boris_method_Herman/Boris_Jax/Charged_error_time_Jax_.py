@@ -116,7 +116,7 @@ def Boris_step(x: jnp.array, v: jnp.array, h: jnp.array = 0.1) -> tuple[jnp.arra
     return: x_next, v_nect
     """
 
-    v_minus = v -  h/2 * gradU(x)    #v_minus
+    v_minus = v -  h/2 * gradU(x)
 
     t = h/2 * B(x)
     s = 2 * t / (1 + t @ t)
