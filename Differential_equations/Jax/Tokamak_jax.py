@@ -40,7 +40,7 @@ def gradU(x: jax.Array) -> float:
 
 # # System of differential equations
 @jax.jit
-def system(t: jax.Array, Y: jax.Array) -> jax.Array:
+def system(t: float, Y: jax.Array) -> jax.Array:
     x = Y[:3]
     v = Y[3:]
     dxdt = v
