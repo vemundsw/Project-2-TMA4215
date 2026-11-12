@@ -8,17 +8,12 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from Differential_equations.Tokamak import r, r2, B, A, U, gradU
+from Differential_equations.numpy.Tokamak import r, r2, B, A, U, gradU
 
 
 
 
-# # Initial conditions
-# x0 = np.array([1.2, 0, 0])
-# v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
 
-# h = 0.1    # Steplength
-# T = 10**4  # Total time 
 
 
 def initial_velocity(x0: np.array, v0: np.array, h: float = 0.1) -> np.array:
@@ -105,6 +100,8 @@ def Boris_method(x0: np.array, v0: np.array, T: int = 10**5, h: float = 0.1,) ->
         x_values[i+1] = x
         v_values[i+1] = v
 
+        
+
     return np.array(x_values), np.array(v_values)
 
 
@@ -155,5 +152,14 @@ def Energy(x: np.array, v: np.array) -> float:
 
 
 
+# Initial conditions
+x0 = np.array([1.2, 0, 0])
+v0 = np.array([0, 4.816* 10**(-4),  -2.059*10**(-3)])
 
+h = 0.1    # Steplength
+T = 10**4  # Total time 
 
+positions, velocities = Boris_method(x0, v0, T, h)
+
+print(positions[0])
+print(velocities[0])

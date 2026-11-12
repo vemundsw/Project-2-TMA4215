@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from Differential_equations.Tokamak import r, r2, B, A, U, gradU, system
+from Differential_equations.numpy.Tokamak import r, r2, B, A, U, gradU, system
 from Tokamak_Boris_method import Boris_method, plot_Boris, Energy
 
 
@@ -24,6 +24,9 @@ t = np.arange(t_0, T, h)
 
 
 positions, velocities = Boris_method(x0, v0, T)
+
+
+
 plot_Boris(positions)
 
 
