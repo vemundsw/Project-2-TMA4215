@@ -24,7 +24,7 @@ def RK4_step(t:jax.Array, Yn:jax.Array, system:jax.Array, h:float) ->jax.Array:
 
     return Yn_new
 
-def RK4(t:jax.Array, T: int,  Y0:jax.Array, system:jax.Array, h:float) ->jax.Array:
+def RK4(t:jax.Array, T: int,  Y0:jax.Array, system, h:float) ->tuple[jax.Array, jax.Array]:
     """
     t: time (is ignored here)
     T: Time duration (how long it should run)
