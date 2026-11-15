@@ -96,7 +96,7 @@ def Newton_Solver(initial_guess, x_n, v_n, h, tol):
 
     tol: tolerance
 
-    return: 
+    return: x_next, v_next, error, stepnumber
 
     """
 
